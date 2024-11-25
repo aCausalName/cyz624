@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Song Management</title>
+    <link rel="icon" href="../images/HoshinoFocus.jpg">
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <style>
+        body {
+            background-image: url('../images/Arona.png');
+            background-attachment: fixed;
+            background-size: 100% 100%;
+        }
+        .log input,
+        select {
+            margin-right: 30px;
+            margin-left: 10px;
+        }
+
+        .input_song {
+            height: 20px;
+            width: 100px;
+        }
+
+        .input_singer {
+            height: 20px;
+            width: 100px;
+        }
+
+        .input_album {
+            height: 20px;
+            width: 100px;
+        }
+
+        .input_submit {
+            height: 20px;
+            width: 100px;
+            background-color: blueviolet;
+        }
+
+        .list {
+            position: absolute;
+            width: 700px;
+            left: 50%;
+            margin-left: -350px;
+        }
+
+        .list table th {
+            height: 30px;
+            width: 100px;
+            font-size: 15px;
+        }
+
+        .list table th:nth-child(-n+6) {
+            border-right: 2px solid transparent;
+            margin: 10px 30px;
+        }
+
+        .list table thead tr {
+            background-color: blueviolet;
+        }
+
+        .list table tbody tr {
+            background-color: #fff;
+        }
+
+        .list table td {
+            height: 30px;
+            width: 100px;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .list table tbody td {
+            border: 1px solid rgb(72, 66, 67);
+            margin: 10px 30px;
+        }
+        .input_submit
+        {
+            width: 60px;
+            height: 35px;
+            font-size: 25px;
+            border: none;
+            color: #39c5bb;
+            border-radius: 10px;
+        }
+    </style>
+    <title>SongManagement</title>
+</head>
+<body>
+    <div>
+        <a href="../index.html" style="font-size: xx-large;color: blue">返回主页</a>
+    </div>
+    <br>
+    <div class="admit">
+        <h2 style="text-align: center">新增歌曲</h2>
+        <form class="log" style="text-align: center">
+            歌名: <input type="text" class="input_song" name="input_song">
+            歌手:<input type="text" class="input_singer" name="input_singer">
+            专辑:<input type="text" class="input_album" name="input_album">
+            语系:<select class="selection">
+                    <option>纯音乐</option>
+                    <option>中文</option>
+                    <option>英文</option>
+                    <option>日语</option>
+                    <option>其他</option>
+                </select>
+            <button class="input_submit">录入</button>
+        </form>
+        <br><br>
+        <h2 style="text-align: center">歌曲列表</h2>
+        <div class="list">
+            <table>
+                <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>歌名</th>
+                    <th>歌手</th>
+                    <th>专辑</th>
+                    <th>语系</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+    <script>
+        const inputSong = document.querySelector('.input_song')
+        const inputSinger = document.querySelector('.input_singer')
+        const inputAlbum = document.querySelector('.input_album')
+        const inputLanguage = document.querySelector('.selection')
+
+        const arrName = document.querySelectorAll('[name]')
+        const log = document.querySelector('.log')
+        const tbody = document.querySelector('tbody')
+
+        const arr = JSON.parse(localStorage.getItem('data')) || []
+
+        log.addEventListener('submit', function (e) {
+            e.preventDefault()
+            for (let i = 0; i < arrName.length; i++) {
+                if (arrName[i].value === '') {
+                    return alert('输入内容不能为空')
+                }
+            }
+            const obj = {
+                songId: arr.length === 0 ? 1 : arr[arr.length - 1].songId + 1,
+                inputSong: inputSong.value,
+                inputSinger: inputSinger.value,
+                inputAlbum: inputAlbum.value,
+                inputLanguage: inputLanguage.value
+            }
+            arr.push(obj)
+            this.reset()
+
+            render()
+            localStorage.setItem('data', JSON.stringify(arr))
+
+        })
+
+        function render() {
+            const trArr = arr.map(function ( ele, index) {
+                return `
+                <tr>
+                    <td>${ele.songId}</td>
+                    <td>${ele.inputSong}</td>
+                    <td>${ele.inputSinger}</td>
+                    <td>${ele.inputAlbum}</td>
+                    <td>${ele.inputLanguage}</td>
+                    <td>
+                     <a href='javascript:' data-id=${index}>删除</a>
+                    </td>
+                <tr>
+                `
+            })
+            tbody.innerHTML = trArr.join('')
+        }
+        render()
+        tbody.addEventListener('click', function (e){
+            if (e.target.tagName === 'A') {
+                arr.splice(e.target.dataset.id, 1)
+                localStorage.setItem('data', JSON.stringify(arr))
+                render()
+            }
+        })
+    </script>
+</body>
+</html>
